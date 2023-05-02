@@ -24,6 +24,9 @@ fun Navigation(
         composable(Screen.ToDoScreen.route) {
             ToDoScreen()
         }
+        composable(Screen.SearchScreen.route){
+            SearchScreen(onClick = { navController.popBackStack() })
+        }
         composable(Screen.SettingsScreen.route) {
             SettingsScreen(onClick = { navController.popBackStack() })
         }

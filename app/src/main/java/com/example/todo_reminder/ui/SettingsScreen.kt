@@ -1,5 +1,6 @@
 package com.example.todo_reminder.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,19 +30,28 @@ fun SettingsScreen(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(MaterialTheme.colors.background)
             .padding(6.dp)
     ) {
-        Row(modifier = modifier.fillMaxWidth().padding(bottom = 5.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(bottom = 5.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             IconButton(onClick = onClick) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colors.onPrimary
+                )
             }
-            Text(text = "Settings", fontSize = 18.sp)
+            Text(text = "Settings", fontSize = 18.sp, color = MaterialTheme.colors.onPrimary)
         }
-        SettingsItem(modifier,{ },  text = "Manage Notification" )
-        SettingsItem(modifier,{ },  text = "Version" )
-        SettingsItem(modifier,{ },  text = "About Notes" )
-        SettingsItem(modifier,{ },  text = "Privacy" )
-            
+        SettingsItem(modifier, { }, text = "Manage Notification")
+        SettingsItem(modifier, { }, text = "Version")
+        SettingsItem(modifier, { }, text = "About Notes")
+        SettingsItem(modifier, { }, text = "Privacy")
 
 
     }
@@ -49,7 +59,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, onClick: () -> Unit) {
 
 @Composable
 fun SettingsItem(modifier: Modifier = Modifier, onClick: () -> Unit, text: String) {
-    
+
     Surface(
         modifier = modifier
             .padding(top = 10.dp),

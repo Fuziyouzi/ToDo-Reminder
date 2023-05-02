@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_reminder.R
-import com.example.todo_reminder.listOfCategory
 import com.example.todo_reminder.ui.theme.Shapes
 import com.example.todo_reminder.ui.theme.ToDoReminderTheme
 

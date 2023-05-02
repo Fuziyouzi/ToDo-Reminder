@@ -24,13 +24,13 @@ private val DarkColorPalette = darkColors(
 
 private val LightColorPalette = lightColors(
     primary = White,
-    primaryVariant = SecondaryWhite,
+    primaryVariant = White,//
     secondary = LightBlue,
     background = White,
-    onPrimary = Black,
-    surface = SecondaryGrey,
-    onBackground = LightBlue,
-    onSecondary = SecondaryGrey,
+    onPrimary = Black,//
+    surface = SecondaryWhite,
+    onBackground = SecondaryWhite,//
+    onSecondary = SecondaryGrey,//
     onSurface = SecondaryGrey
 
     /* Other default colors to override

@@ -8,8 +8,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -32,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.todo_reminder.R
-import com.example.todo_reminder.listOfCategory
 import com.example.todo_reminder.ui.theme.*
 import kotlinx.coroutines.launch
 
@@ -54,7 +55,6 @@ fun MainScreen(modifier: Modifier = Modifier, navController: NavHostController) 
             AddTodosSheet(modifier, focusRequester)
         }
     ) {
-
         HomeScreen(
             navController = navController,
             scaffoldState = scaffoldState,
@@ -77,10 +77,19 @@ fun HomeScreen(
 
     var expanded by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    var toDoView by remember { mutableStateOf(false)}
+    var toDoView by remember { mutableStateOf(false) }
+    var textMenuView by remember { mutableStateOf("Grid View") }
+     if (!toDoView) {
+         expanded = false
+         textMenuView =  "Grid View"
+     }
+     else {
+         expanded = false
+         textMenuView = "List View"
 
-    Scaffold(
-        modifier = modifier.padding(6.dp),
+     }
+         Scaffold(
+        modifier = modifier,
         floatingActionButton = {
             FloatingButton(
                 {
@@ -93,10 +102,10 @@ fun HomeScreen(
             )
         },
         floatingActionButtonPosition = FabPosition.End
-    ) { padding ->
+    ) { padd ->
         Column(
             modifier = modifier
-                .padding(padding)
+                .padding(6.dp)
                 .fillMaxSize()
         ) {
             Row(
@@ -111,7 +120,7 @@ fun HomeScreen(
                         .padding(end = 10.dp)
                         .size(34.dp)
                         .clickable {
-                            navController.navigate(Screen.ToDoScreen.route) {
+                            navController.navigate(Screen.SearchScreen.route) {
                                 launchSingleTop = true
                             }
                         },
@@ -154,9 +163,9 @@ fun HomeScreen(
                     fontSize = 14.sp
                 )
             }
-            DropdownMenuItem(onClick = { toDoView = !toDoView }) {
+            DropdownMenuItem(onClick = { toDoView = !toDoView  }) {
                 Text(
-                    text = "Grid View", color = colors.onPrimary,
+                    text = textMenuView, color = colors.onPrimary,
                     fontSize = 14.sp
                 )
             }
@@ -198,7 +207,8 @@ fun CategoryItem(modifier: Modifier = Modifier, onClick: () -> Unit, text: Strin
         elevation = 12.dp
     ) {
         Row(
-            modifier = modifier.padding(vertical = 14.dp, horizontal = 16.dp),
+            modifier = modifier
+                .padding(vertical = 14.dp, horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -222,12 +232,10 @@ fun TodoList(modifier: Modifier = Modifier) {
 
     LazyColumn(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(5.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        list.forEach {
-            item {
-                ToDoItem(checkBox = it.check, text = it.text, onCheckedChange = { })
-            }
+        items(list, key = { it.number }) {
+            ToDoItem(checkBox = it.check, text = it.text, onCheckedChange = { })
         }
 
     }
@@ -235,20 +243,17 @@ fun TodoList(modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ToDoGrid(modifier: Modifier = Modifier){
+fun ToDoGrid(modifier: Modifier = Modifier) {
 
     LazyVerticalStaggeredGrid(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         columns = StaggeredGridCells.Fixed(2),
-        verticalItemSpacing = 6.dp
+        verticalItemSpacing = 8.dp
     ) {
-        list.forEach {
-            item {
-                ToDoGridItem(checkBox = it.check, text = it.text, onCheckedChange = { })
-            }
+        items(list, key = { it.number }) {
+            ToDoGridItem(checkBox = it.check, text = it.text, onCheckedChange = { })
         }
-
     }
 }
 

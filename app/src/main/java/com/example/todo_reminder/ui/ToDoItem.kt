@@ -1,6 +1,7 @@
 package com.example.todo_reminder.ui
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,36 +26,31 @@ fun ToDoItem(
     onCheckedChange: (Boolean) -> Unit
 ) {
 
-    Surface(
-        modifier = modifier,
-        shape = MaterialTheme.shapes.medium.copy(CornerSize(24)),
-        color =
-        if (!checkBox) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.onBackground
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.medium.copy(CornerSize(24)))
+            .clickable { }
+            .background(if (!checkBox) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.onBackground),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-
-        Row(
-            modifier = modifier
-                .clickable { }
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(
-                checked = checkBox,
-                modifier = modifier,
-                onCheckedChange = onCheckedChange,
-                colors = CheckboxDefaults.colors(
-                    checkedColor = MaterialTheme.colors.secondary,
-                    uncheckedColor = MaterialTheme.colors.onSurface
-                )
+        Checkbox(
+            checked = checkBox,
+            modifier = modifier,
+            onCheckedChange = onCheckedChange,
+            colors = CheckboxDefaults.colors(
+                checkedColor = MaterialTheme.colors.secondary,
+                uncheckedColor = MaterialTheme.colors.onSurface,
+                checkmarkColor = MaterialTheme.colors.onPrimary
             )
-            Text(
-                text = text,
-                fontSize = 17.sp,
-                modifier = modifier.padding(start = 14.dp),
-                maxLines = 2,
-                color = if (!checkBox) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary
-            )
-        }
+        )
+        Text(
+            text = text,
+            fontSize = 17.sp,
+            modifier = modifier.padding(start = 14.dp),
+            maxLines = 2,
+            color = if (!checkBox) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary
+        )
     }
 }
 
@@ -64,34 +61,37 @@ fun ToDoGridItem(
     text: String,
     onCheckedChange: (Boolean) -> Unit
 ) {
-    Surface(
-        modifier = modifier,
-        shape = MaterialTheme.shapes.medium.copy(CornerSize(24)),
-        color = if (!checkBox) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.onBackground
-    ) {
-        Box(
-            modifier = modifier.clickable { },
-            contentAlignment = Alignment.TopStart
-        ) {
-            Checkbox(
-                checked = checkBox,
-                modifier = modifier,
-                onCheckedChange = onCheckedChange,
-                colors = CheckboxDefaults.colors(
-                    checkedColor = MaterialTheme.colors.secondary,
-                    uncheckedColor = MaterialTheme.colors.onSurface
-                )
-            )
-            Text(
-                text = text,
-                fontSize = 17.sp,
-                modifier = modifier.padding(start = 48.dp, top = 10.dp),
-                maxLines = 8,
-                color = if (!checkBox) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary
-            )
-        }
-    }
 
+    Box(
+        modifier = modifier
+            .clip(shape = MaterialTheme.shapes.medium.copy(CornerSize(24)))
+            .background(if (!checkBox) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.onBackground)
+            .clickable { },
+        contentAlignment = Alignment.TopStart
+    ) {
+        Checkbox(
+            checked = checkBox,
+            modifier = modifier,
+            onCheckedChange = onCheckedChange,
+            colors = CheckboxDefaults.colors(
+                checkedColor = MaterialTheme.colors.secondary,
+                uncheckedColor = MaterialTheme.colors.onSurface,
+                checkmarkColor = MaterialTheme.colors.onPrimary
+            )
+        )
+        Text(
+            text = text,
+            fontSize = 17.sp,
+            modifier = modifier.padding(
+                start = 48.dp,
+                top = 10.dp,
+                bottom = 10.dp,
+                end = 10.dp
+            ),
+            maxLines = 8,
+            color = if (!checkBox) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary
+        )
+    }
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

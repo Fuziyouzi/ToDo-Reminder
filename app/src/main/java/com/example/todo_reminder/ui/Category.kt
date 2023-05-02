@@ -1,4 +1,4 @@
-package com.example.todo_reminder
+package com.example.todo_reminder.ui
 
 data class Category(val image: Int, val category: String)
 
