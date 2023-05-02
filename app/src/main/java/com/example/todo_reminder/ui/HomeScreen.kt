@@ -89,7 +89,7 @@ fun HomeScreen(
 
      }
          Scaffold(
-        modifier = modifier,
+        modifier = modifier.padding(6.dp),
         floatingActionButton = {
             FloatingButton(
                 {
@@ -102,10 +102,10 @@ fun HomeScreen(
             )
         },
         floatingActionButtonPosition = FabPosition.End
-    ) { padd ->
+    ) { padding ->
         Column(
             modifier = modifier
-                .padding(6.dp)
+                .padding(padding)
                 .fillMaxSize()
         ) {
             Row(
