@@ -79,16 +79,15 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
     var toDoView by remember { mutableStateOf(false) }
     var textMenuView by remember { mutableStateOf("Grid View") }
-     if (!toDoView) {
-         expanded = false
-         textMenuView =  "Grid View"
-     }
-     else {
-         expanded = false
-         textMenuView = "List View"
+    if (!toDoView) {
+        expanded = false
+        textMenuView = "Grid View"
+    } else {
+        expanded = false
+        textMenuView = "List View"
 
-     }
-         Scaffold(
+    }
+    Scaffold(
         modifier = modifier.padding(6.dp),
         floatingActionButton = {
             FloatingButton(
@@ -140,8 +139,9 @@ fun HomeScreen(
             ) {
                 listOfCategory.forEach {
                     item {
-                        CategoryItem(
+                        RadioButtonCategory(
                             onClick = { },
+                            selected = it.selected,
                             text = it.category
                         )
                     }
@@ -157,13 +157,13 @@ fun HomeScreen(
             offset = DpOffset(220.dp, (-210).dp),
             onDismissRequest = { expanded = false }
         ) {
-            DropdownMenuItem(onClick = { /*TODO*/ }) {
+            DropdownMenuItem(onClick = { navController.navigate(Screen.ManageCategories.route) }) {
                 Text(
                     text = "Manage categories", color = colors.onPrimary,
                     fontSize = 14.sp
                 )
             }
-            DropdownMenuItem(onClick = { toDoView = !toDoView  }) {
+            DropdownMenuItem(onClick = { toDoView = !toDoView }) {
                 Text(
                     text = textMenuView, color = colors.onPrimary,
                     fontSize = 14.sp
@@ -197,13 +197,20 @@ fun FloatingButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
 }
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CategoryItem(modifier: Modifier = Modifier, onClick: () -> Unit, text: String) {
+fun RadioButtonCategory(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    selected: Boolean,
+    text: String
+) {
 
     Card(
-        modifier = modifier.clickable { onClick },
+        modifier = modifier,
+        onClick = onClick,
         shape = MaterialTheme.shapes.medium.copy(CornerSize(24)),
-        backgroundColor = colors.onBackground,
+        backgroundColor = if (!selected) colors.background else colors.secondary,
         elevation = 12.dp
     ) {
         Row(
@@ -223,8 +230,8 @@ fun CategoryItem(modifier: Modifier = Modifier, onClick: () -> Unit, text: Strin
                 color = colors.onPrimary
             )
         }
-
     }
+
 }
 
 @Composable
@@ -232,7 +239,8 @@ fun TodoList(modifier: Modifier = Modifier) {
 
     LazyColumn(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(list, key = { it.number }) {
             ToDoItem(checkBox = it.check, text = it.text, onCheckedChange = { })

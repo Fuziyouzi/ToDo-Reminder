@@ -30,6 +30,9 @@ fun Navigation(
         composable(Screen.SettingsScreen.route) {
             SettingsScreen(onClick = { navController.popBackStack() })
         }
+        composable(Screen.ManageCategories.route){
+            ManageCategoriesScreen(backButton = { navController.popBackStack() })
+        }
     }
 }
 

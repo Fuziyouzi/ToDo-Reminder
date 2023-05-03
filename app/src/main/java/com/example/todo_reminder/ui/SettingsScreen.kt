@@ -30,30 +30,35 @@ fun SettingsScreen(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.background)
             .padding(6.dp)
     ) {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(bottom = 5.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = onClick) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    tint = MaterialTheme.colors.onPrimary
-                )
-            }
-            Text(text = "Settings", fontSize = 18.sp, color = MaterialTheme.colors.onPrimary)
-        }
+        TopBar(text = "Search", onClick = onClick )
+
         SettingsItem(modifier, { }, text = "Manage Notification")
         SettingsItem(modifier, { }, text = "Version")
         SettingsItem(modifier, { }, text = "About Notes")
         SettingsItem(modifier, { }, text = "Privacy")
 
 
+    }
+}
+
+@Composable
+fun TopBar(modifier: Modifier = Modifier, text: String, onClick: () -> Unit){
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(bottom = 5.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(onClick = onClick) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Back",
+                tint = MaterialTheme.colors.onPrimary
+            )
+        }
+        Text(text = text, fontSize = 18.sp, color = MaterialTheme.colors.onPrimary)
     }
 }
 
