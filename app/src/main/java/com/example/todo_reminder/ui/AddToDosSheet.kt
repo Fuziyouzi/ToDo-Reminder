@@ -95,6 +95,29 @@ fun AddTodosSheet(
                     text = "Category",
                     color = colors.onSecondary
                 )
+                DropdownMenu(
+                    expanded = expanded,
+                    modifier = modifier
+                        .size(height = 180.dp, width = 130.dp)
+                        .background(colors.surface, RoundedCornerShape(84)),
+                    onDismissRequest = { expanded = false }
+                ) {
+                    DropdownMenuItem(onClick = { /*TODO*/ }) {
+                        Text(
+                            text = "No Category", color = colors.secondary,
+                            fontSize = 15.sp
+                        )
+                    }
+                    listOfCategory.forEach {
+                        DropdownMenuItem(onClick = { /*TODO*/ }) {
+                            Text(
+                                text = it.category,
+                                color = colors.onPrimary,
+                                fontSize = 15.sp
+                            )
+                        }
+                    }
+                }
             }
             Icon(
                 modifier = modifier
@@ -124,30 +147,7 @@ fun AddTodosSheet(
             }
         }
     }
-    DropdownMenu(
-        expanded = expanded,
-        modifier = modifier
-            .size(height = 180.dp, width = 130.dp)
-            .background(colors.surface, RoundedCornerShape(84)),
-        offset = DpOffset(20.dp, (-210).dp),
-        onDismissRequest = { expanded = false }
-    ) {
-        DropdownMenuItem(onClick = { /*TODO*/ }) {
-            Text(
-                text = "No Category", color = colors.secondary,
-                fontSize = 15.sp
-            )
-        }
-        listOfCategory.forEach {
-            DropdownMenuItem(onClick = { /*TODO*/ }) {
-                Text(
-                    text = it.category,
-                    color = colors.onPrimary,
-                    fontSize = 15.sp
-                )
-            }
-        }
-    }
+
 
 }
 

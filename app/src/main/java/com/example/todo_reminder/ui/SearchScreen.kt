@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -69,7 +70,7 @@ fun SearchScreen(modifier: Modifier = Modifier, onClick: () -> Unit) {
         }
         keyboardController?.show()
         Row(
-            modifier = modifier.width(IntrinsicSize.Min),
+            modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -106,7 +107,7 @@ fun SearchScreen(modifier: Modifier = Modifier, onClick: () -> Unit) {
                 }
             )
 
-
+            Spacer(modifier = modifier.weight(1f))
             Surface(
                 modifier = modifier
                     .width(1.dp)

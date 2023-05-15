@@ -1,14 +1,20 @@
 package com.example.todo_reminder.ui
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -18,33 +24,41 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo_reminder.ui.theme.Shapes
+import kotlin.reflect.KProperty
 
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier, onClick: () -> Unit) {
+
+    var scrollState = rememberScrollState()
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(6.dp)
     ) {
-        TopBar(text = "Search", onClick = onClick )
+        TopBar(text = "Search", onClick = onClick)
+        Column(modifier = modifier.fillMaxWidth()
+            .verticalScroll(scrollState)) {
+            SettingsItem(modifier, { }, text = "Manage Notification")
+            SettingsItem(modifier, { }, text = "Version")
+            SettingsItem(modifier, { }, text = "About Notes")
+            SettingsItem(modifier, { }, text = "Privacy")
+        }
 
-        SettingsItem(modifier, { }, text = "Manage Notification")
-        SettingsItem(modifier, { }, text = "Version")
-        SettingsItem(modifier, { }, text = "About Notes")
-        SettingsItem(modifier, { }, text = "Privacy")
 
 
     }
 }
 
 @Composable
-fun TopBar(modifier: Modifier = Modifier, text: String, onClick: () -> Unit){
+fun TopBar(modifier: Modifier = Modifier, text: String, onClick: () -> Unit) {
     Row(
         modifier = modifier
             .fillMaxWidth()

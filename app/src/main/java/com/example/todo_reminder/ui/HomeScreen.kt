@@ -24,6 +24,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -31,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.todo_reminder.R
@@ -125,13 +127,43 @@ fun HomeScreen(
                         },
                     contentDescription = "Search main screen",
                 )
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    modifier = modifier
-                        .size(34.dp)
-                        .clickable { expanded = true },
-                    contentDescription = "More main screen"
-                )
+                Box(modifier = modifier){
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        modifier = modifier
+                            .size(34.dp)
+                            .clickable { expanded = true },
+                        contentDescription = "More main screen"
+                    )
+                    DropdownMenu(
+                        expanded = expanded,
+                        modifier = modifier
+                            .background(colors.surface, RoundedCornerShape(84)),
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        DropdownMenuItem(onClick = { navController.navigate(Screen.ManageCategories.route) }) {
+                            Text(
+                                text = "Manage categories", color = colors.onPrimary,
+                                fontSize = 14.sp
+                            )
+                        }
+                        DropdownMenuItem(onClick = { toDoView = !toDoView }) {
+                            Text(
+                                text = textMenuView, color = colors.onPrimary,
+                                fontSize = 14.sp
+                            )
+                        }
+                        DropdownMenuItem(
+                            onClick = { navController.navigate(Screen.SettingsScreen.route) }
+                        ) {
+                            Text(
+                                text = "Settings", color = colors.onPrimary,
+                                fontSize = 14.sp
+                            )
+                        }
+                    }
+                }
+
             }
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(18.dp),
@@ -140,7 +172,7 @@ fun HomeScreen(
                 listOfCategory.forEach {
                     item {
                         RadioButtonCategory(
-                            onClick = { },
+                            onClick = {  it.selected = !it.selected   },
                             selected = it.selected,
                             text = it.category
                         )
@@ -149,34 +181,6 @@ fun HomeScreen(
 
             }
             if (!toDoView) TodoList() else ToDoGrid()
-        }
-        DropdownMenu(
-            expanded = expanded,
-            modifier = modifier
-                .background(colors.surface, RoundedCornerShape(84)),
-            offset = DpOffset(220.dp, (-210).dp),
-            onDismissRequest = { expanded = false }
-        ) {
-            DropdownMenuItem(onClick = { navController.navigate(Screen.ManageCategories.route) }) {
-                Text(
-                    text = "Manage categories", color = colors.onPrimary,
-                    fontSize = 14.sp
-                )
-            }
-            DropdownMenuItem(onClick = { toDoView = !toDoView }) {
-                Text(
-                    text = textMenuView, color = colors.onPrimary,
-                    fontSize = 14.sp
-                )
-            }
-            DropdownMenuItem(
-                onClick = { navController.navigate(Screen.SettingsScreen.route) }
-            ) {
-                Text(
-                    text = "Settings", color = colors.onPrimary,
-                    fontSize = 14.sp
-                )
-            }
         }
     }
 }
@@ -208,7 +212,7 @@ fun RadioButtonCategory(
 
     Card(
         modifier = modifier,
-        onClick = onClick,
+        onClick =  onClick ,
         shape = MaterialTheme.shapes.medium.copy(CornerSize(24)),
         backgroundColor = if (!selected) colors.background else colors.secondary,
         elevation = 12.dp
