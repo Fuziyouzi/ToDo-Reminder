@@ -35,8 +35,8 @@ fun ToDoItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
-            checked = checkBox,
             modifier = modifier,
+            checked = checkBox,
             onCheckedChange = onCheckedChange,
             colors = CheckboxDefaults.colors(
                 checkedColor = MaterialTheme.colors.secondary,
@@ -45,9 +45,9 @@ fun ToDoItem(
             )
         )
         Text(
+            modifier = modifier.padding(start = 14.dp),
             text = text,
             fontSize = 17.sp,
-            modifier = modifier.padding(start = 14.dp),
             maxLines = 2,
             color = if (!checkBox) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary
         )
@@ -70,8 +70,8 @@ fun ToDoGridItem(
         contentAlignment = Alignment.TopStart
     ) {
         Checkbox(
-            checked = checkBox,
             modifier = modifier,
+            checked = checkBox,
             onCheckedChange = onCheckedChange,
             colors = CheckboxDefaults.colors(
                 checkedColor = MaterialTheme.colors.secondary,
@@ -80,14 +80,14 @@ fun ToDoGridItem(
             )
         )
         Text(
-            text = text,
-            fontSize = 17.sp,
             modifier = modifier.padding(
                 start = 48.dp,
                 top = 10.dp,
                 bottom = 10.dp,
                 end = 10.dp
             ),
+            text = text,
+            fontSize = 17.sp,
             maxLines = 8,
             color = if (!checkBox) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary
         )

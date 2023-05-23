@@ -8,6 +8,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -28,7 +32,10 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -87,10 +94,11 @@ fun HomeScreen(
     } else {
         expanded = false
         textMenuView = "List View"
-
     }
+    var choosenCategory by remember { mutableStateOf(true) }
+
     Scaffold(
-        modifier = modifier.padding(6.dp),
+        modifier = modifier.padding(8.dp),
         floatingActionButton = {
             FloatingButton(
                 {
@@ -127,7 +135,7 @@ fun HomeScreen(
                         },
                     contentDescription = "Search main screen",
                 )
-                Box(modifier = modifier){
+                Box(modifier = modifier) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
                         modifier = modifier
@@ -172,8 +180,8 @@ fun HomeScreen(
                 listOfCategory.forEach {
                     item {
                         RadioButtonCategory(
-                            onClick = {  it.selected = !it.selected   },
-                            selected = it.selected,
+                            onClick = { !choosenCategory },
+                            selected = if (it.selected) choosenCategory else false,
                             text = it.category
                         )
                     }
@@ -212,7 +220,7 @@ fun RadioButtonCategory(
 
     Card(
         modifier = modifier,
-        onClick =  onClick ,
+        onClick = onClick,
         shape = MaterialTheme.shapes.medium.copy(CornerSize(24)),
         backgroundColor = if (!selected) colors.background else colors.secondary,
         elevation = 12.dp
@@ -238,33 +246,73 @@ fun RadioButtonCategory(
 
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TodoList(modifier: Modifier = Modifier) {
+
+    val checkedListState by remember { mutableStateOf(list.filter { it.check }) }
+    val uncheckedListState by remember { mutableStateOf(list.filter { !it.check }) }
+
 
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        items(list, key = { it.number }) {
+        items(uncheckedListState, key = { it.number }) {
+
             ToDoItem(checkBox = it.check, text = it.text, onCheckedChange = { })
         }
+        stickyHeader {
+            Row(
+                modifier = modifier
+                    .padding(vertical = 10.dp, horizontal = 10.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = modifier,
+                    text = "Completed", fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Surface(
+                    modifier = modifier
+                        .padding(start = 10.dp)
+                        .fillMaxWidth()
+                        .height(0.5.dp),
+                    color = colors.onSecondary
+                ) {}
+            }
+        }
 
+        items(checkedListState, key = { it.number }) {
+            ToDoItem(checkBox = it.check, text = it.text, onCheckedChange = {})
+        }
     }
+
 }
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ToDoGrid(modifier: Modifier = Modifier) {
 
+    val checkedListState by remember { mutableStateOf(list.filter { it.check }) }
+    val uncheckedListState by remember { mutableStateOf(list.filter { !it.check }) }
     LazyVerticalStaggeredGrid(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         columns = StaggeredGridCells.Fixed(2),
         verticalItemSpacing = 8.dp
     ) {
-        items(list, key = { it.number }) {
+        items(uncheckedListState, key = { it.number }) {
+
             ToDoGridItem(checkBox = it.check, text = it.text, onCheckedChange = { })
+        }
+
+        items(checkedListState, key = { it.number }) {
+            ToDoGridItem(checkBox = it.check, text = it.text, onCheckedChange = {})
         }
     }
 }
@@ -296,5 +344,11 @@ fun EmptyMainScreen(modifier: Modifier = Modifier) {
             color = LightGrey
         )
     }
+}
+
+fun LazyGridScope.header(
+    content: @Composable LazyGridItemScope.() -> Unit
+) {
+    item(span = { GridItemSpan(this.maxLineSpan) }, content = content)
 }
 

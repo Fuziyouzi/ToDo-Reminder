@@ -2,7 +2,7 @@ package com.example.todo_reminder.ui
 
 data class ToDo(val number: Int, val check: Boolean, val text: String)
 
-val list = listOf<ToDo>(
+val list = mutableListOf<ToDo>(
     ToDo(1,false, "Ready go ga lad epf legj ad  adadad adadadada adadad dqdqwerq dadadq qrqrqsda dqdasdqrasdadqdasdad12q"),
     ToDo(2,false, "Ready go  "),
     ToDo(3,false, "Ready go ga lad epf legj ad "),
