@@ -19,6 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
@@ -31,11 +35,16 @@ import com.example.todo_reminder.ui.theme.ToDoReminderTheme
 @Composable
 fun AddTodosSheet(
     modifier: Modifier = Modifier,
-    focusRequester: FocusRequester
+    focusRequester:() -> FocusRequester
 ) {
 
     var expanded by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
+    var categoryText by remember { mutableStateOf("Category") }
+    var subTasks by remember { mutableStateOf(false) }
+    var count by remember { mutableStateOf(0) }
+    subTasks = count != 0
+
 
     Column(
         modifier = modifier
@@ -55,7 +64,7 @@ fun AddTodosSheet(
         OutlinedTextField(
             modifier = modifier
                 .fillMaxWidth()
-                .focusRequester(focusRequester),
+                .focusRequester(focusRequester.invoke()),
             placeholder = {
                 Text(
                     text = "Input new task here",
@@ -71,10 +80,10 @@ fun AddTodosSheet(
                 textColor = colors.onPrimary
             ),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { focusRequester.freeFocus() })
+            keyboardActions = KeyboardActions(onDone = { focusRequester.invoke().freeFocus() })
         )
-        LazyColumn() {
-
+        if (subTasks) {
+            SubToDosList(modifier = modifier, count = count, remove = { count -= 1})
         }
         Row(
             modifier = modifier
@@ -92,7 +101,7 @@ fun AddTodosSheet(
             ) {
                 Text(
                     modifier = modifier.padding(8.dp),
-                    text = "Category",
+                    text = categoryText,
                     color = colors.onSecondary
                 )
                 DropdownMenu(
@@ -102,14 +111,17 @@ fun AddTodosSheet(
                         .background(colors.surface, RoundedCornerShape(84)),
                     onDismissRequest = { expanded = false }
                 ) {
-                    DropdownMenuItem(onClick = { /*TODO*/ }) {
+                    DropdownMenuItem(onClick = { categoryText = "No Category" }) {
                         Text(
                             text = "No Category", color = colors.secondary,
                             fontSize = 15.sp
                         )
                     }
                     listOfCategory.forEach {
-                        DropdownMenuItem(onClick = { /*TODO*/ }) {
+                        DropdownMenuItem(onClick = {
+                            categoryText = it.category
+                            expanded = false
+                        }) {
                             Text(
                                 text = it.category,
                                 color = colors.onPrimary,
@@ -129,7 +141,9 @@ fun AddTodosSheet(
             Icon(
                 modifier = modifier
                     .size(26.dp)
-                    .clickable { },
+                    .clickable {
+                        count++
+                    },
                 imageVector = Icons.Default.Add, contentDescription = ""
             )
             Spacer(modifier = modifier.weight(1f))
@@ -147,37 +161,57 @@ fun AddTodosSheet(
             }
         }
     }
+}
 
+@Composable
+fun SubToDosList(modifier: Modifier = Modifier, count: Int, remove: () -> Unit) {
+    LazyColumn(modifier = modifier) {
+        repeat(count) {
+            item {
+                SubToDosAdd(modifier = modifier, remove = remove)
+            }
+        }
 
+    }
 }
 
 
 @Composable
-fun SubToDosAdd(modifier: Modifier = Modifier) {
+fun SubToDosAdd(modifier: Modifier = Modifier, remove: () -> Unit) {
+    var completed by remember { mutableStateOf(false) }
+    var text by remember { mutableStateOf("") }
+
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
         RadioButton(
-            selected = true,
-            onClick = { /*TODO*/ },
+            selected = completed,
+            onClick = { completed = !completed },
             colors = RadioButtonDefaults.colors(
                 selectedColor = colors.secondary
             )
         )
         TextField(
-            value = "Add SubTask",
+            value = text,
             modifier = modifier.weight(1f),
-            onValueChange = {},
+            placeholder = {
+                Text(text = "Add SubTask", color = colors.onSecondary)
+            },
+            onValueChange = { text = it },
             colors = TextFieldDefaults.textFieldColors(
-                textColor = colors.onPrimary,
-                backgroundColor = colors.primaryVariant
+                textColor = if (!completed) colors.onPrimary else colors.onSecondary,
+                backgroundColor = colors.primaryVariant,
+                cursorColor = colors.secondary
             )
         )
-        Icon(
-            imageVector = Icons.Default.Close, contentDescription = "",
-            modifier = modifier.clickable { })
+        IconButton(onClick = remove) {
+            Icon(
+                imageVector = Icons.Default.Close, contentDescription = "Delete SubTask"
+            )
+        }
+
     }
 }
 
@@ -186,6 +220,5 @@ fun SubToDosAdd(modifier: Modifier = Modifier) {
 @Composable
 fun PreviewSheetAdd() {
     ToDoReminderTheme {
-        SubToDosAdd()
     }
 }

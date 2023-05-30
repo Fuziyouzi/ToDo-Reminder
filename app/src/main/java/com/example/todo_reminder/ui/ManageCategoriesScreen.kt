@@ -1,13 +1,12 @@
 package com.example.todo_reminder.ui
 
-import android.graphics.drawable.shapes.Shape
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,7 +24,6 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -46,28 +44,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import com.example.todo_reminder.R
-import javax.sql.RowSetWriter
 
 @Composable
 fun ManageCategoriesScreen(modifier: Modifier = Modifier, backButton: () -> Unit) {
 
     val scrollState = rememberScrollState()
     val list = listOfCategory
-
 
     Column(
         modifier = modifier
@@ -135,14 +126,15 @@ fun CategoryItem(
                 .padding(start = 16.dp),
             text = if (category != "") category else text
         )
-        IconButton(onClick = { visibility = !visibility }) {
-            Icon(
-                modifier = modifier.size(20.dp),
-                painter = painterResource(if (visibility) R.drawable.visible_eye else R.drawable.not_visible_eye),
-                contentDescription = "Eye visible",
-                tint = MaterialTheme.colors.secondary
-            )
-        }
+            IconButton(onClick = { visibility = !visibility }) {
+                Icon(
+                    modifier = modifier.size(20.dp),
+                    painter = painterResource(if (visibility) R.drawable.visible_eye else R.drawable.not_visible_eye),
+                    contentDescription = "Eye visible",
+                    tint = MaterialTheme.colors.secondary
+                )
+            }
+
         IconButton(onClick = { expanded = true }) {
             Icon(imageVector = Icons.Default.MoreVert, contentDescription = "More Category Item")
             DropdownMenu(

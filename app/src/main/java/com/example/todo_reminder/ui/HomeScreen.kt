@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -40,6 +41,8 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.todo_reminder.R
@@ -48,11 +51,17 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun MainScreen(modifier: Modifier = Modifier, navController: NavHostController) {
+fun MainScreen(
+    modifier: Modifier = Modifier,
+    settings: () -> Unit,
+    manageCategories: () -> Unit,
+    search: () -> Unit,
+    toDoScreen: () -> Unit
+) {
 
     val scaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val keyBoard = LocalSoftwareKeyboardController.current
-    val focusRequester = remember { FocusRequester() }
+    val focusRequester = remember { mutableStateOf(FocusRequester()) }
 
     ModalBottomSheetLayout(
         modifier = modifier.fillMaxSize(),
@@ -61,14 +70,17 @@ fun MainScreen(modifier: Modifier = Modifier, navController: NavHostController) 
         sheetBackgroundColor = colors.primaryVariant,
         sheetContent = {
             if (!scaffoldState.isVisible) keyBoard?.hide()
-            AddTodosSheet(modifier, focusRequester)
+            AddTodosSheet(modifier, focusRequester = { focusRequester.value })
         }
     ) {
         HomeScreen(
-            navController = navController,
             scaffoldState = scaffoldState,
-            focusRequester = focusRequester,
-            keyboard = keyBoard
+            focusRequester = focusRequester.value,
+            keyboard = keyBoard,
+            settings = settings,
+            manageCategories = manageCategories,
+            search = search,
+            toDoScreen =  toDoScreen
         )
     }
 }
@@ -78,23 +90,30 @@ fun MainScreen(modifier: Modifier = Modifier, navController: NavHostController) 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    navController: NavController,
     focusRequester: FocusRequester,
     scaffoldState: ModalBottomSheetState,
-    keyboard: SoftwareKeyboardController?
+    keyboard: SoftwareKeyboardController?,
+    settings: () -> Unit,
+    search: () -> Unit,
+    manageCategories: () -> Unit,
+    toDoScreen: () -> Unit,
+    vm: HomeViewModel = hiltViewModel()
 ) {
 
     var expanded by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    var toDoView by remember { mutableStateOf(false) }
     var textMenuView by remember { mutableStateOf("Grid View") }
-    if (!toDoView) {
+    val scrollState = rememberLazyListState()
+    val gridView = vm._gridView.collectAsStateWithLifecycle()
+
+    if (gridView.value){
         expanded = false
         textMenuView = "Grid View"
-    } else {
+    } else{
         expanded = false
         textMenuView = "List View"
     }
+
     var choosenCategory by remember { mutableStateOf(true) }
 
     Scaffold(
@@ -121,20 +140,19 @@ fun HomeScreen(
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    modifier = modifier
-                        .padding(end = 10.dp)
-                        .size(34.dp)
-                        .clickable {
-                            navController.navigate(Screen.SearchScreen.route) {
-                                launchSingleTop = true
-                            }
-                        },
-                    contentDescription = "Search main screen",
-                )
+                IconButton(onClick = search) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        modifier = modifier
+                            .padding(end = 10.dp)
+                            .size(34.dp),
+                        contentDescription = "Search main screen",
+                    )
+                }
+
                 Box(modifier = modifier) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
@@ -149,20 +167,22 @@ fun HomeScreen(
                             .background(colors.surface, RoundedCornerShape(84)),
                         onDismissRequest = { expanded = false }
                     ) {
-                        DropdownMenuItem(onClick = { navController.navigate(Screen.ManageCategories.route) }) {
+                        DropdownMenuItem(onClick = manageCategories) {
                             Text(
                                 text = "Manage categories", color = colors.onPrimary,
                                 fontSize = 14.sp
                             )
                         }
-                        DropdownMenuItem(onClick = { toDoView = !toDoView }) {
+                        DropdownMenuItem(onClick = {
+                            vm.changeToDoView()
+                        }) {
                             Text(
                                 text = textMenuView, color = colors.onPrimary,
                                 fontSize = 14.sp
                             )
                         }
                         DropdownMenuItem(
-                            onClick = { navController.navigate(Screen.SettingsScreen.route) }
+                            onClick = settings
                         ) {
                             Text(
                                 text = "Settings", color = colors.onPrimary,
@@ -188,7 +208,7 @@ fun HomeScreen(
                 }
 
             }
-            if (!toDoView) TodoList() else ToDoGrid()
+            if (!gridView.value) TodoList(toDoScreen =  toDoScreen) else ToDoGrid()
         }
     }
 }
@@ -248,7 +268,7 @@ fun RadioButtonCategory(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TodoList(modifier: Modifier = Modifier) {
+fun TodoList(modifier: Modifier = Modifier, toDoScreen: () -> Unit) {
 
     val checkedListState by remember { mutableStateOf(list.filter { it.check }) }
     val uncheckedListState by remember { mutableStateOf(list.filter { !it.check }) }
@@ -260,8 +280,7 @@ fun TodoList(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(uncheckedListState, key = { it.number }) {
-
-            ToDoItem(checkBox = it.check, text = it.text, onCheckedChange = { })
+            ToDoItem(checkBox = {it.check}, text = it.text, onCheckedChange = { }, toDoScreen =  toDoScreen )
         }
         stickyHeader {
             Row(
@@ -287,7 +306,7 @@ fun TodoList(modifier: Modifier = Modifier) {
         }
 
         items(checkedListState, key = { it.number }) {
-            ToDoItem(checkBox = it.check, text = it.text, onCheckedChange = {})
+            ToDoItem(checkBox = { it.check }, text = it.text, onCheckedChange = {}, toDoScreen = {})
         }
     }
 

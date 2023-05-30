@@ -7,8 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ToDoScreen(){
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text(text = "TODODODODOD")
+fun ToDoScreen(modifier: Modifier = Modifier, onBackPressed: () -> Unit){
+    Column(modifier = modifier.fillMaxSize()) {
+        TopBar(text = "toDoId.toString()", onClick = onBackPressed)
     }
 }

@@ -19,18 +19,25 @@ fun Navigation(
         startDestination = Screen.HomeScreen.route
     ) {
         composable(Screen.HomeScreen.route) {
-            MainScreen(navController = navController)
+            MainScreen(
+                settings = { navController.navigate(Screen.SettingsScreen.route) },
+                manageCategories = { navController.navigate(Screen.ManageCategories.route) },
+                search = { navController.navigate(Screen.SearchScreen.route) },
+                toDoScreen = { navController.navigate(Screen.ToDoScreen.route) }
+            )
         }
-        composable(Screen.ToDoScreen.route) {
-            ToDoScreen()
+        composable(
+            route = Screen.ToDoScreen.route
+        ) {
+            ToDoScreen(onBackPressed = { navController.popBackStack() })
         }
-        composable(Screen.SearchScreen.route){
+        composable(Screen.SearchScreen.route) {
             SearchScreen(onClick = { navController.popBackStack() })
         }
         composable(Screen.SettingsScreen.route) {
             SettingsScreen(onClick = { navController.popBackStack() })
         }
-        composable(Screen.ManageCategories.route){
+        composable(Screen.ManageCategories.route) {
             ManageCategoriesScreen(backButton = { navController.popBackStack() })
         }
     }
